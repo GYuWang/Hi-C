@@ -74,13 +74,13 @@ def main(chr, down, up, opt):
     else:
         plot_TAD('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/'+chr+'_matrix_HUVEC_Coverage.txt.'+str(down)+'.' + str(up),
                  '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/'+chr+'_matrix_HUVEC_Coverage.txt.'+str(down)+'.' + str(up) +
-                 '.band.txt', 1, 8)
+                 '.band.txt', 1.8, 12)
         plot_TAD('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/GM12878/' + chr + '_matrix_GM12878_Coverage.txt.' + str(
             down) + '.' + str(up),'/Users/guangyu/Work/Hi-C/Data/Contactmatrix/GM12878/' + chr + '_matrix_GM12878_Coverage.txt.' + str(
-                     down) + '.' + str(up) +'.band.txt', 10, 80)
+                     down) + '.' + str(up) +'.band.txt', 12, 90)
         plot_TAD('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/'+chr+'_matrix_IMR90_Coverage.txt.'+str(down)+'.'+str(up),
                  '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/'+chr+'_matrix_IMR90_Coverage.txt.'+str(down)+'.'+str(up) +
-                 '.band.txt', 2, 30)
+                 '.band.txt', 1.5, 20)
         # plot_TAD('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/NHEK/' + chr + '_matrix_NHEK_Coverage.txt.' + str(
         #     down) + '.' + str(up),'/Users/guangyu/Work/Hi-C/Data/Contactmatrix/NHEK/' + chr + '_matrix_NHEK_Coverage.txt'
         #     '.' + str(down) + '.' + str(up) + '.band.txt', 0.5, 7)
@@ -90,7 +90,7 @@ def main(chr, down, up, opt):
 
 
 if __name__== "__main__":
-    main('11', 2900, 3900, 2)
+    main('22', 3000, 4000, 2)
 
 
 
