@@ -33,7 +33,7 @@ def sim_range(TAD):
 def RangInList(L, TAD):
     flag1 = 1
     for t in TAD:
-        if abs(L[1] - t[1]) < 10 and abs(L[2] - t[2])<10:
+        if abs(L[1] - t[1]) < 10 and abs(L[2] - t[2]) < 10:
             flag1 = 0
     return flag1
 
@@ -118,7 +118,7 @@ def region_divid_v3(TAD1, TAD2, TAD_s):
 
 
 
-def calculate_region_mean(D3, map1, map2):
+def calculate_region_mean(D3, map1, map2, p1, p2):
     '''
     :param D3: divided region
     :param map1: contact map of cell1
@@ -136,9 +136,9 @@ def calculate_region_mean(D3, map1, map2):
             for j in range(d.shape[0]):
                 m1 = map1[int(d[i][0]): int(d[i][1]), int(d[j][0]): int(d[j][1])]
                 m2 = map2[int(d[i][0]): int(d[i][1]), int(d[j][0]): int(d[j][1])]
-                avr1 = np.mean(m1[m1 < 10])
+                avr1 = np.mean(m1[m1 < p1])             # need to change!!!!
                 avr_all1_temp[i, j] = avr1
-                avr2 = np.mean(m2[m2 < 10])
+                avr2 = np.mean(m2[m2 < p2])             # need to change!!!!
                 avr_all2_temp[i, j] = avr2
         avr_all1.append([avr_all1_temp, count])
         avr_all2.append([avr_all2_temp, count])
@@ -236,7 +236,7 @@ def compar_prob(ratio1, ratio2):
     for i in range(len(ratio1)):
         if ratio2[i][2] == 1 and ratio1[i][2] != 1:
             ratio_tmp = ratio2[i][0] - ratio1[i][0]
-            if np.mean(ratio_tmp.diagonal()) > 0.1:    # real divide region by cutoff: -0.1
+            if np.mean(ratio_tmp.diagonal()) > 0.09:    # real divide region by cutoff: -0.1
                 idx.append(ratio2[i][1])
     return idx
 
@@ -318,7 +318,7 @@ def remove_diff(loc_u, loc_d, TAD_s):
 
 
 
-def divid_region(f1, f2, D3, D1, TAD_s):
+def divid_region(f1, f2, D3, D1, TAD_s, p1, p2):
     '''
     main function for divided region detection
     :param f1: cell line1
@@ -331,7 +331,7 @@ def divid_region(f1, f2, D3, D1, TAD_s):
     '''
     map1 = np.loadtxt(f1)
     map2 = np.loadtxt(f2)
-    avr1, avr2, avr_diff = calculate_region_mean(D3, map1, map2)      # count mean interaction in different region
+    avr1, avr2, avr_diff = calculate_region_mean(D3, map1, map2, p1, p2)      # count mean interaction in different region
     ratio1 = count_cross_prob(avr1)                                   # count diff ratio
     ratio2 = count_cross_prob(avr2)
     idx = compar_prob(ratio1, ratio2)                                 # find real divide region index
@@ -370,7 +370,7 @@ def main_find_diff(chr):
     TAD_s, TAD1_only, TAD2_only = region_detect(TAD1, TAD2)
     D1, D2, D3 = region_divid_v3(TAD2, TAD1, TAD_s)
 
-    #print('yyy')
+    # print('yyy')
     f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HMEC/' + chr + '_matrix_HMEC_Coverage.txt'
     f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/' + chr + '_matrix_HUVEC_Coverage.txt'
 
@@ -389,13 +389,37 @@ def main_find_diff(chr):
 
 
 
-for i in range(5,23):
-    print(i)
-    main_find_diff(str(i))
+
+# for i in range(5,23):
+#     print(i)
+#     main_find_diff(str(i))
 
 
 
 #main_find_diff('19')
+
+
+TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/5_matrix_IMR90_Coverage.txt.100.1500.band.txt')
+TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/5_matrix_HUVEC_Coverage.txt.100.1500.band.txt')
+TAD_s, TAD1_only, TAD2_only = region_detect(TAD1, TAD2)
+D1, D2, D3 = region_divid_v3(TAD2, TAD1, TAD_s)
+
+# print('yyy')
+f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/5_matrix_IMR90_Coverage.txt.100.1500'
+f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/5_matrix_HUVEC_Coverage.txt.100.1500'
+
+divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f1, f2, D3, D1, TAD_s, 25, 10)
+
+
+try:
+    if divid1_1 == 0:
+        print('No')
+except:
+    np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/5_divid.txt', divid1_1)
+    np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/5_merge.txt', divid2_1)
+    np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/5_divid_loc.txt', loc_d)
+    np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/5_divid_union.txt', loc_u)
+    np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/5_similar.txt', dlt)
 
 
 
