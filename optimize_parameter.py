@@ -51,8 +51,11 @@ def plot_TAD(f1, f2, lim_down, lim_up):
             color_img = cv2.rectangle(color_img, (math.ceil(float(x[1])), math.ceil(float(x[1]))),
                                       (math.ceil(float(x[2])), math.ceil(float(x[2]))), (0, 0, 0), 2,
                                       lineType=4)
+            # color_img = cv2.rectangle(color_img, (math.ceil(float(x[1]))-4000, math.ceil(float(x[1]))-4000),
+            #                           (math.ceil(float(x[2]))-4000, math.ceil(float(x[2]))-4000), (0, 0, 0), 2,
+            #                           lineType=4)
     band.close()
-    cv2.imwrite(f1 + '.tiff', color_img)
+    cv2.imwrite(f2 + '.tiff', color_img)
 
 
 def main(chr, down, up, opt):
@@ -72,15 +75,22 @@ def main(chr, down, up, opt):
 
 
     else:
-        plot_TAD('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/'+chr+'_matrix_HUVEC_Coverage.txt.'+str(down)+'.' + str(up),
-                 '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/'+chr+'_matrix_HUVEC_Coverage.txt.'+str(down)+'.' + str(up) +
-                 '.band.txt', 1.8, 12)
-        plot_TAD('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/GM12878/' + chr + '_matrix_GM12878_Coverage.txt.' + str(
-            down) + '.' + str(up),'/Users/guangyu/Work/Hi-C/Data/Contactmatrix/GM12878/' + chr + '_matrix_GM12878_Coverage.txt.' + str(
-                     down) + '.' + str(up) +'.band.txt', 12, 90)
-        plot_TAD('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/'+chr+'_matrix_IMR90_Coverage.txt.'+str(down)+'.'+str(up),
-                 '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/'+chr+'_matrix_IMR90_Coverage.txt.'+str(down)+'.'+str(up) +
-                 '.band.txt', 1.5, 20)
+        # plot_TAD('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr+'_matrix_HUVEC_Coverage.txt.'+str(down)+'.' + str(up)+'.new',
+        #          '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr+'_matrix_HUVEC_Coverage.txt.'+str(down)+'.' + str(up) +
+        #          '.new.band.2.txt', 1, 8)
+        # plot_TAD('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/' + chr + '_matrix_HUVEC_Coverage.txt.' + str(
+        #     down) + '.' + str(up),
+        #          '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/band_opt/5_matrix_HUVEC_Coverage.txt', 1.8, 12)
+        # plot_TAD('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/GM12878/' + chr + '_matrix_GM12878_Coverage.txt.' + str(
+        #     down) + '.' + str(up),'/Users/guangyu/Work/Hi-C/Data/Contactmatrix/GM12878/' + chr + '_matrix_GM12878_Coverage.txt.' + str(
+        #              down) + '.' + str(up) +'.band.txt', 12, 90)
+        plot_TAD('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr+'_matrix_IMR90_Coverage.txt.'+str(down)+'.'+str(up)+'.new',
+                 '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr+'_matrix_IMR90_Coverage.txt.'+str(down)+'.'+str(up) +
+                 '.new.band2.txt', 1, 20)
+        # plot_TAD(
+        #     '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/' + chr + '_matrix_IMR90_Coverage.txt.' + str(
+        #         down) + '.' + str(up),
+        #     '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/band_opt/5_matrix_IMR90_Coverage.txt', 2, 25)
         # plot_TAD('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/NHEK/' + chr + '_matrix_NHEK_Coverage.txt.' + str(
         #     down) + '.' + str(up),'/Users/guangyu/Work/Hi-C/Data/Contactmatrix/NHEK/' + chr + '_matrix_NHEK_Coverage.txt'
         #     '.' + str(down) + '.' + str(up) + '.band.txt', 0.5, 7)
@@ -90,7 +100,7 @@ def main(chr, down, up, opt):
 
 
 if __name__== "__main__":
-    main('22', 3000, 4000, 2)
+    main('6', 4000, 5000, 2)
 
 
 

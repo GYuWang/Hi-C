@@ -1,23 +1,47 @@
 import numpy as np
-from itertools import combinations
 from sklearn import linear_model
-from scipy import stats
-import matplotlib.pyplot as plt
+from itertools import combinations
+import os
 
 
 def region_detect(TAD1, TAD2):
     flag1 = []
     flag2 = []
     band_s = np.array([0,0,0])
-    for i in range(0,TAD1.shape[0]):
-        for j in range(0, TAD2.shape[0]):
-            if abs(TAD1[i,2] - TAD2[j,2]) <= 10 and abs(TAD1[i,1] - TAD2[j,1]) <= 10:
-                band_s = np.vstack([band_s, (TAD1[i,:]+TAD2[j,:])/2])
-                flag1.append(i)
-                flag2.append(j)
-    TAD1_only = np.delete(TAD1, flag1, axis=0)
-    TAD2_only = np.delete(TAD2, flag2, axis=0)
-    return band_s[1:,:], TAD1_only, TAD2_only
+    try:
+        for i in range(0,TAD1.shape[0]):
+            for j in range(0, TAD2.shape[0]):
+                if abs(TAD1[i,2] - TAD2[j,2]) <= 10 and abs(TAD1[i,1] - TAD2[j,1]) <= 10:
+                    band_s = np.vstack([band_s, (TAD1[i,:]+TAD2[j,:])/2])
+                    flag1.append(i)
+                    flag2.append(j)
+        TAD1_only = np.delete(TAD1, flag1, axis=0)
+        TAD2_only = np.delete(TAD2, flag2, axis=0)
+    except:
+        try:
+            TAD2 = TAD2.reshape([1,3])
+            for i in range(0,TAD1.shape[0]):
+                for j in range(0, TAD2.shape[0]):
+                    if abs(TAD1[i,2] - TAD2[j,2]) <= 10 and abs(TAD1[i,1] - TAD2[j,1]) <= 10:
+                        band_s = np.vstack([band_s, (TAD1[i,:]+TAD2[j,:])/2])
+                        flag1.append(i)
+                        flag2.append(j)
+            TAD1_only = np.delete(TAD1, flag1, axis=0)
+            TAD2_only = np.delete(TAD2, flag2, axis=0)
+        except:
+            TAD1 = TAD1.reshape([1, 3])
+            for i in range(0, TAD1.shape[0]):
+                for j in range(0, TAD2.shape[0]):
+                    if abs(TAD1[i, 2] - TAD2[j, 2]) <= 10 and abs(TAD1[i, 1] - TAD2[j, 1]) <= 10:
+                        band_s = np.vstack([band_s, (TAD1[i, :] + TAD2[j, :]) / 2])
+                        flag1.append(i)
+                        flag2.append(j)
+            TAD1_only = np.delete(TAD1, flag1, axis=0)
+            TAD2_only = np.delete(TAD2, flag2, axis=0)
+    try:
+        return band_s[1:,:], TAD1_only, TAD2_only
+    except:
+        return band_s, TAD1_only, TAD2_only
 
 
 def sim_range(TAD):
@@ -64,14 +88,12 @@ def TAD_divid_V3(range1, range2, TAD_s):
                     length = length + s[2] - s[1]
                     f2 = RangInList(s, TAD_s.tolist())
                     flag3.append(f2)
-
                 r = length / (range1[2] - range1[1])
-                #print(x, r, sum(flag3))
                 #if r > 0.9 and r < 1.1 and sum(flag3) != 0:
-                if r > 0.9 and r < 1.1:                                     # not need to remove similar region
+                if r > 0.8 and r < 1.1:                                 # change parameter
                     flag2 = 0  # find all real sep
-                    for l in range(x.shape[0]-1):
-                        print(x[l, :], x.shape[0])
+                    for l in range(x.shape[0] - 1):
+                        # print(x[l,:], x.shape[0])
                         if x[l + 1, 1] - x[l, 2] > 30 or x[l, 2] - x[l + 1, 1] > 20:
                             flag2 = 1
                     if flag2 == 0:
@@ -94,101 +116,94 @@ def region_divid_v3(TAD1, TAD2, TAD_s):
     diff2 = []
     diff3 = []
     count = 0
-    for i, t1 in enumerate(TAD1):
-        for t2 in TAD2:
-            if t1[1] - t2[1] < 20 and t2[2] - t1[2] < 20:
-                TAD_in = np.append(TAD_in, [t2], axis=0)
-        #print(t1, TAD_in)                        # cannot find region????
-        D = TAD_divid_V3(t1, TAD_in, TAD_s)
-        print(t1, D)
-        if D is not None and len(D) != 0:
-            #dif.append([t1, D])
-            m = []
-            for j in range(0, len(D)):
-                m.append(D[j][0].shape[0])
-            #print(t1, D, max(m))
+    try:
+        for i, t1 in enumerate(TAD1):
+            for t2 in TAD2:
+                if t1[1] - t2[1] < 20 and t2[2] - t1[2] < 20:
+                    TAD_in = np.append(TAD_in, [t2], axis=0)
+            D = TAD_divid_V3(t1, TAD_in, TAD_s)
+            #print(t1, D)
+            if D is not None and len(D) != 0:
+                #dif.append([t1, D])
+                m = []
+                for j in range(0, len(D)):
+                    m.append(D[j][0].shape[0])
+                #print(t1, D, max(m))
 
-            for j in range(0, len(D)):
-                if D[j][0].shape[0] == max(m):
-                    diff1.append([t1, count])
-                    diff2.append(D[j])
-                    diff3.append([D[j][0][:, 1:3], count])
-                    count = count + 1
-                    max_region = D[j]
-            #print(t1, max_region[0][:, 1:3])
-        TAD_in = np.empty(shape=[0, 3])
+                for j in range(0, len(D)):
+                    if D[j][0].shape[0] == max(m):
+                        diff1.append([t1, count])
+                        diff2.append(D[j])
+                        diff3.append([D[j][0][:, 1:3], count])
+                        count = count + 1
+                        max_region = D[j]
+                #print(t1, max_region[0][:, 1:3])
+            TAD_in = np.empty(shape=[0, 3])
+    except:
+        try:
+            TAD1 = TAD1.reshape([1,3])
+            for i, t1 in enumerate(TAD1):
+                for t2 in TAD2:
+                    if t1[1] - t2[1] < 20 and t2[2] - t1[2] < 20:
+                        TAD_in = np.append(TAD_in, [t2], axis=0)
+                D = TAD_divid_V3(t1, TAD_in, TAD_s)
+                # print(t1, D)
+                if D is not None and len(D) != 0:
+                    # dif.append([t1, D])
+                    m = []
+                    for j in range(0, len(D)):
+                        m.append(D[j][0].shape[0])
+                    # print(t1, D, max(m))
+
+                    for j in range(0, len(D)):
+                        if D[j][0].shape[0] == max(m):
+                            diff1.append([t1, count])
+                            diff2.append(D[j])
+                            diff3.append([D[j][0][:, 1:3], count])
+                            count = count + 1
+                            max_region = D[j]
+                            # print(t1, max_region[0][:, 1:3])
+                TAD_in = np.empty(shape=[0, 3])
+        except:
+            TAD2 = TAD2.reshape([1, 3])
+            for i, t1 in enumerate(TAD1):
+                for t2 in TAD2:
+                    if t1[1] - t2[1] < 20 and t2[2] - t1[2] < 20:
+                        TAD_in = np.append(TAD_in, [t2], axis=0)
+                D = TAD_divid_V3(t1, TAD_in, TAD_s)
+                # print(t1, D)
+                if D is not None and len(D) != 0:
+                    # dif.append([t1, D])
+                    m = []
+                    for j in range(0, len(D)):
+                        m.append(D[j][0].shape[0])
+                    # print(t1, D, max(m))
+
+                    for j in range(0, len(D)):
+                        if D[j][0].shape[0] == max(m):
+                            diff1.append([t1, count])
+                            diff2.append(D[j])
+                            diff3.append([D[j][0][:, 1:3], count])
+                            count = count + 1
+                            max_region = D[j]
+                            # print(t1, max_region[0][:, 1:3])
+                TAD_in = np.empty(shape=[0, 3])
     return np.array(diff1), np.array(diff2), np.array(diff3)
 
 
 
 ###### find divide regions
 
-def linear_transform(map, left, right, up, down):
+def linear_transform(map):
     '''
     use linear regression to transform matrix
     :param map: contact map
-    :return: transformed contact map in left-right, up-down
+    :return: transformed contact map
     '''
     x = np.empty(shape=[1])
     y = np.empty(shape=[1])
-    for i in range(up, down):
-        dig = max(left, i)
-        for j in range(dig, right):
-            if map[i, j] != 0 and (j-i) > 2:
-                x = np.append(x, np.log(j-i))
-                y = np.append(y, np.log(map[i, j]))
-    x = x.reshape(x.shape[0], 1)
-    y = y.reshape(y.shape[0], 1)
-    regr = linear_model.LinearRegression()
-    regr.fit(x, y)
-    pred = regr.predict(x)
-    m = regr.coef_[0]
-    b = regr.intercept_
-
-    # fig, ax = plt.subplots()
-    # ax.scatter(x,y)
-    # ax.plot(x, pred, color='blue', linewidth=3)
-    # plt.show()
-    # print(m, b)
-    return m, b
 
 
-
-
-def linear_transform_plot(map, left, right, up, down):
-    '''
-    use linear regression to transform matrix
-    :param map: contact map
-    :return: transformed contact map in left-right, up-down
-    '''
-    x = np.empty(shape=[1])
-    y = np.empty(shape=[1])
-    for i in range(up, down):
-        # dig = max(left, i)
-        for j in range(left, right):
-            if map[i, j] != 0 and (j-i) > 2:
-                x = np.append(x, np.log(j-i))
-                y = np.append(y, np.log(map[i, j]))
-    x = x.reshape(x.shape[0], 1)
-    y = y.reshape(y.shape[0], 1)
-    regr = linear_model.LinearRegression()
-    regr.fit(x, y)
-    pred = regr.predict(x)
-    m = regr.coef_[0]
-    b = regr.intercept_
-
-    print(left)
-    print(up)
-    #print(map.shape)
-    print(x)
-    print(y)
-    # fig, ax = plt.subplots()
-    # ax.scatter(x,y)
-    # ax.plot(x, pred, color='blue', linewidth=3)
-    # plt.show()
-    # print(m, b)
-
-    return m, b
 
 
 
@@ -211,33 +226,14 @@ def calculate_region_mean(D3, map1, map2, p1, p2):
             for j in range(d.shape[0]):
                 m1 = map1[int(d[i][0]): int(d[i][1]), int(d[j][0]): int(d[j][1])]
                 m2 = map2[int(d[i][0]): int(d[i][1]), int(d[j][0]): int(d[j][1])]
-
-                slope1, b1 = linear_transform(map1, int(d[i][0]), int(d[i][1]), int(d[j][0]), int(d[j][1]))
-                #avr1 = np.mean(m1[m1 < p1])             # need to change!!!!
-                avr_all1_temp[i, j] = b1
-                slope2, b2 = linear_transform(map2, int(d[i][0]), int(d[i][1]), int(d[j][0]), int(d[j][1]))
-                #avr2 = np.mean(m2[m2 < p2])             # need to change!!!!
-                avr_all2_temp[i, j] = b2
+                avr1 = np.mean(m1[m1 < p1])             # need to change!!!!
+                avr_all1_temp[i, j] = avr1
+                avr2 = np.mean(m2[m2 < p2])             # need to change!!!!
+                avr_all2_temp[i, j] = avr2
         avr_all1.append([avr_all1_temp, count])
         avr_all2.append([avr_all2_temp, count])
         avr_diff.append([avr_all1_temp - avr_all2_temp, count])
-
-    print(avr_all1)
-        # if count == 2:
-        #     for i in range(d.shape[0]):
-        #         for j in range(d.shape[0]):
-        #             #print(map1[int(d[i][0]): int(d[i][1]), int(d[j][0]): int(d[j][1])])
-        #             slope1, b1 = linear_transform_plot(map1, int(d[j][0]), int(d[j][1]), int(d[i][0]), int(d[i][1]))
-        #             #
-        #             # avr1 = np.mean(m1[m1 < p1])             # need to change!!!!
-        #             #avr_all1_temp[i, j] = b1
-        #             #slope2, b2 = linear_transform(map2, int(d[i][0]), int(d[i][1]), int(d[j][0]), int(d[j][1]))
-        #             # avr2 = np.mean(m2[m2 < p2])             # need to change!!!!
-        #             #avr_all2_temp[i, j] = b2
-
     return avr_all1, avr_all2, avr_diff
-
-
 
 
 
@@ -305,8 +301,8 @@ def count_cross_prob(avr):
     for count, t in enumerate(avr):
         intract = t[0]
         R = count_cross_prob_eachregion(intract)
-        x1 = R.diagonal()[R.diagonal() > 0.45].shape[0]   # high ratio region define by o.45 as cutoff
-        x2 = R.diagonal()[R.diagonal() < 0.45].shape[0]   # low ratio region
+        x1 = R.diagonal()[R.diagonal() > 0.47].shape[0]   # high ratio region define by o.45 as cutoff
+        x2 = R.diagonal()[R.diagonal() < 0.47].shape[0]   # low ratio region
         flag = 0
         if R.shape[0] == 1:
             if R[0, 0] > 0.45:
@@ -319,20 +315,7 @@ def count_cross_prob(avr):
 
 
 
-def compar_prob(ratio1, ratio2):
-    '''
-    find real split site
-    :param ratio1: split region
-    :param ratio2: merge region
-    :return: real split site
-    '''
-    idx = []
-    for i in range(len(ratio1)):
-        if ratio2[i][2] == 1 and ratio1[i][2] != 1:
-            ratio_tmp = ratio2[i][0] - ratio1[i][0]
-            if np.mean(ratio_tmp.diagonal()) > 0.09:    # real divide region by cutoff: -0.1
-                idx.append(ratio2[i][1])
-    return idx
+
 
 
 
@@ -410,7 +393,21 @@ def remove_diff(loc_u, loc_d, TAD_s):
     return TAD_s
 
 
-
+def compar_prob(ratio1, ratio2):
+    '''
+    find real split site
+    :param ratio1: split region
+    :param ratio2: merge region
+    :return: real split site
+    '''
+    idx = []
+    for i in range(len(ratio1)):
+        # if ratio2[i][2] == 1 and ratio1[i][2] != 1:       # not need to unit
+        if ratio1[i][2] != 1:
+            ratio_tmp = ratio2[i][0] - ratio1[i][0]
+            if np.mean(ratio_tmp.diagonal()) > 0.09:    # real divide region by cutoff: -0.1
+                idx.append(ratio2[i][1])
+    return idx
 
 def divid_region(f1, f2, D3, D1, TAD_s, p1, p2):
     '''
@@ -493,49 +490,103 @@ def main_find_diff(chr):
 #main_find_diff('19')
 
 
-TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/5_matrix_IMR90_Coverage.txt.4000.5000.band2.txt')
-TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/5_matrix_HUVEC_Coverage.txt.4000.5000.band.txt')
-TAD_s, TAD1_only, TAD2_only = region_detect(TAD1, TAD2)
-D1, D2, D3 = region_divid_v3(TAD2, TAD1, TAD_s)
-
-# print('yyy')
-f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/5_matrix_IMR90_Coverage.txt.4000.5000'
-f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/5_matrix_HUVEC_Coverage.txt.4000.5000'
-
-divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f1, f2, D3, D1, TAD_s, 25, 10)
-
-
-try:
-    if divid1_1 == 0:
-        print('No')
-except:
-    np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/5_divid.txt', divid1_1)
-    np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/5_merge.txt', divid2_1)
-    np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/5_divid_loc.txt', loc_d)
-    np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/5_divid_union.txt', loc_u)
-    np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/5_similar.txt', dlt)
-
-
-
-# TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/nature12/chr4_chr4_matrix_band_0.85.txt')
-# TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/4_matrix_HUVEC_Coverage_band.txt')
+# TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/5_matrix_IMR90_Coverage.txt.4000.5000.band2.txt')
+# TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/5_matrix_HUVEC_Coverage.txt.4000.5000.band.txt')
 # TAD_s, TAD1_only, TAD2_only = region_detect(TAD1, TAD2)
 # D1, D2, D3 = region_divid_v3(TAD2, TAD1, TAD_s)
 #
-# #print('yyy')
-# f1 = '/Users/guangyu/Work/Hi-C/Data/nature12/chr4_chr4_matrix.txt'
-# f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/4_matrix_HUVEC_Coverage.txt'
+# # print('yyy')
+# f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/5_matrix_IMR90_Coverage.txt.4000.5000'
+# f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/5_matrix_HUVEC_Coverage.txt.4000.5000'
 #
-# divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f1, f2, D3, D1, TAD_s)
+# divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f1, f2, D3, D1, TAD_s, 25, 8)
 #
-# try divid1_1 == 0:
-#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/hESC/chr4_divid.txt', divid1_1)
-#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/hESC/chr4_merge.txt', divid2_1)
-#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/hESC/chr4_divid_loc.txt', loc_d)
-#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/hESC/chr4_divid_union.txt', loc_u)
-#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/hESC/chr4_similar.txt', dlt)
-#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/hESC/chr4_similar_all.txt', TAD_s)
+#
+# try:
+#     if divid1_1 == 0:
+#         print('No')
 # except:
-#     pass
+#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/5_divid.txt', divid1_1)
+#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/5_merge.txt', divid2_1)
+#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/5_divid_loc.txt', loc_d)
+#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/5_divid_union.txt', loc_u)
+#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/5_similar.txt', dlt)
 
 
+list_IRM90 = os.listdir('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file2')
+list_IMR90_band = []
+list_IMR90_map = []
+for l in list_IRM90:
+    if('band' in l):
+        list_IMR90_band.append(l)
+    else:
+        list_IMR90_map.append(l)
+
+list_HUVEC = os.listdir('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file2')
+list_HUVEC_band = []
+list_HUVEC_map = []
+for l in list_HUVEC:
+    if('band' in l):
+        list_HUVEC_band.append(l)
+    else:
+        list_HUVEC_map.append(l)
+
+chr = []
+up = []
+down = []
+for l in list_IMR90_map:
+    s = l.replace('.', '_').split('_')
+    if(len(s)>5):
+        chr.append(s[0])
+        up.append(s[6])
+        down.append(s[5])
+
+for i in range(1, len(chr)):
+    print(i)
+    try:
+        TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file2/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.'+up[i] +'.new2.band.txt')
+        TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file2/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new2.band.txt')
+        TAD_s, TAD1_only, TAD2_only = region_detect(TAD1, TAD2)
+        D1, D2, D3 = region_divid_v3(TAD2, TAD1, TAD_s)
+
+        f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file2/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.new2'
+        f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file2/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new2'
+
+        divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f1, f2, D3, D1, TAD_s, 25, 8)
+
+
+        try:
+            if divid1_1 == 0:
+                print('No')
+        except:
+            np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC2/'+chr[i]+'.' + down[i] + '.'+up[i] +'.divid1_1', divid1_1)
+            np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC2/'+chr[i]+'.' + down[i] + '.'+up[i] +'.divid2_1', divid2_1)
+            np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC2/'+chr[i]+'.' + down[i] + '.'+up[i] +'.loc_d', loc_d)
+            np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC2/'+chr[i]+'.' + down[i] + '.'+up[i] +'.loc_u', loc_u)
+            np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC2/'+chr[i]+'.' + down[i] + '.'+up[i] +'.dlt', dlt)
+    except:
+        pass
+
+
+# i = 10
+#
+# TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.'+up[i] +'.new.band.txt')
+# TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new.band.txt')
+# TAD_s, TAD1_only, TAD2_only = region_detect(TAD1, TAD2)
+# D1, D2, D3 = region_divid_v3(TAD2, TAD1, TAD_s)
+#
+# f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.new'
+# f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new'
+#
+# divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f1, f2, D3, D1, TAD_s, 25, 8)
+#
+#
+# try:
+#     if divid1_1 == 0:
+#         print('No')
+# except:
+#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/'+chr[i]+'.' + down[i] + '.'+up[i] +'.divid1_1', divid1_1)
+#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/'+chr[i]+'.' + down[i] + '.'+up[i] +'.divid2_1', divid2_1)
+#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/'+chr[i]+'.' + down[i] + '.'+up[i] +'.loc_d', loc_d)
+#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/'+chr[i]+'.' + down[i] + '.'+up[i] +'.loc_u', loc_u)
+#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/'+chr[i]+'.' + down[i] + '.'+up[i] +'.dlt', dlt)
