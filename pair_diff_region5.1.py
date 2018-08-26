@@ -2,6 +2,7 @@ import numpy as np
 from sklearn import linear_model
 from itertools import combinations
 import os
+import pandas as pd
 
 
 def region_detect(TAD1, TAD2):
@@ -89,12 +90,13 @@ def TAD_divid_V3(range1, range2, TAD_s):
                     f2 = RangInList(s, TAD_s.tolist())
                     flag3.append(f2)
                 r = length / (range1[2] - range1[1])
+                #print(x, r)
                 #if r > 0.9 and r < 1.1 and sum(flag3) != 0:
                 if r > 0.8 and r < 1.1:                                 # change parameter
                     flag2 = 0  # find all real sep
                     for l in range(x.shape[0] - 1):
                         # print(x[l,:], x.shape[0])
-                        if x[l + 1, 1] - x[l, 2] > 30 or x[l, 2] - x[l + 1, 1] > 20:
+                        if x[l + 1, 1] - x[l, 2] > 20 or x[l, 2] - x[l + 1, 1] > 20:     # change parameter
                             flag2 = 1
                     if flag2 == 0:
                         dic.append([x, r])
@@ -121,22 +123,26 @@ def region_divid_v3(TAD1, TAD2, TAD_s):
             for t2 in TAD2:
                 if t1[1] - t2[1] < 20 and t2[2] - t1[2] < 20:
                     TAD_in = np.append(TAD_in, [t2], axis=0)
+            #print('-------')
+            #print(t1, TAD_in)
+            #print('+++++++')
             D = TAD_divid_V3(t1, TAD_in, TAD_s)
-            #print(t1, D)
+
             if D is not None and len(D) != 0:
                 #dif.append([t1, D])
                 m = []
                 for j in range(0, len(D)):
                     m.append(D[j][0].shape[0])
+
                 #print(t1, D, max(m))
 
                 for j in range(0, len(D)):
-                    if D[j][0].shape[0] == max(m):
+                    #if D[j][0].shape[0] == max(m):             # choose the most split (not need)
                         diff1.append([t1, count])
                         diff2.append(D[j])
                         diff3.append([D[j][0][:, 1:3], count])
                         count = count + 1
-                        max_region = D[j]
+                        #max_region = D[j]
                 #print(t1, max_region[0][:, 1:3])
             TAD_in = np.empty(shape=[0, 3])
     except:
@@ -147,7 +153,7 @@ def region_divid_v3(TAD1, TAD2, TAD_s):
                     if t1[1] - t2[1] < 20 and t2[2] - t1[2] < 20:
                         TAD_in = np.append(TAD_in, [t2], axis=0)
                 D = TAD_divid_V3(t1, TAD_in, TAD_s)
-                # print(t1, D)
+                #print(t1, D)
                 if D is not None and len(D) != 0:
                     # dif.append([t1, D])
                     m = []
@@ -171,7 +177,7 @@ def region_divid_v3(TAD1, TAD2, TAD_s):
                     if t1[1] - t2[1] < 20 and t2[2] - t1[2] < 20:
                         TAD_in = np.append(TAD_in, [t2], axis=0)
                 D = TAD_divid_V3(t1, TAD_in, TAD_s)
-                # print(t1, D)
+                #print(t1, D)
                 if D is not None and len(D) != 0:
                     # dif.append([t1, D])
                     m = []
@@ -226,6 +232,7 @@ def calculate_region_mean(D3, map1, map2, p1, p2):
             for j in range(d.shape[0]):
                 m1 = map1[int(d[i][0]): int(d[i][1]), int(d[j][0]): int(d[j][1])]
                 m2 = map2[int(d[i][0]): int(d[i][1]), int(d[j][0]): int(d[j][1])]
+                #print(p1)
                 avr1 = np.mean(m1[m1 < p1])             # need to change!!!!
                 avr_all1_temp[i, j] = avr1
                 avr2 = np.mean(m2[m2 < p2])             # need to change!!!!
@@ -279,6 +286,35 @@ def calculate_region_split100(D3, map, n):
             avr_all = np.append(avr_all, [[avr_all2_temp_1, avr_all2_temp_2, avr_all2_temp_3]], axis=0)
         #avr_all.append(np.array(avr_all0_temp))
     return avr_all
+
+
+
+
+
+# TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HMEC/5_matrix_HMEC_Coverage_band.txt')
+# TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/5_matrix_HUVEC_Coverage_band.txt')
+# TAD_s, TAD1_only, TAD2_only = region_detect(TAD1, TAD2)
+# D1, D2, D3 = region_divid_v3(TAD2, TAD1, TAD_s)
+#
+# f1 = "/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HMEC/5_matrix_HMEC_Coverage.txt"
+# f2 = "/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/5_matrix_HUVEC_Coverage.txt"
+# map1 = np.loadtxt(f1)
+# map2 = np.loadtxt(f2)
+#
+#
+# test1 = calculate_region_split100(D3, map1, 30)
+# mean1_1 = sum(test1[:, 0])/test1.shape[0]
+# mean1_2 = sum(test1[:, 1])/test1.shape[0]
+# mean1_3 = sum(test1[:, 2])/test1.shape[0]
+#
+# a1 = np.append(mean1_1, mean1_2, axis=1)
+# a2 = np.append(mean1_2, mean1_3, axis=1)
+# b = np.append(a1, a2, axis=0)
+#
+# np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/chr5_map1_1.txt', mean1_1)
+# np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/chr5_map1_2.txt', mean1_2)
+# np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/chr5_map1_3.txt', mean1_3)
+# np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/chr5_map1.txt', b)
 
 
 
@@ -402,7 +438,7 @@ def compar_prob(ratio1, ratio2):
     '''
     idx = []
     for i in range(len(ratio1)):
-        # if ratio2[i][2] == 1 and ratio1[i][2] != 1:       # not need to unit
+        #if ratio2[i][2] == 1 and ratio1[i][2] != 1:       # not need to unit
         if ratio1[i][2] != 1:
             ratio_tmp = ratio2[i][0] - ratio1[i][0]
             if np.mean(ratio_tmp.diagonal()) > 0.09:    # real divide region by cutoff: -0.1
@@ -440,19 +476,6 @@ def divid_region(f1, f2, D3, D1, TAD_s, p1, p2):
 
 
 
-# TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HMEC/5_matrix_HMEC_Coverage_band.txt')
-# TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/5_matrix_HUVEC_Coverage_band.txt')
-# TAD_s, TAD1_only, TAD2_only = region_detect(TAD1, TAD2)
-# D1, D2, D3 = region_divid_v3(TAD2, TAD1, TAD_s)
-# f1 = "/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HMEC/5_matrix_HMEC_Coverage.txt"
-# f2 = "/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/5_matrix_HUVEC_Coverage.txt"
-# divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f1, f2, D3, D1, TAD_s)
-#
-# np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/chr5_divid.txt', divid1_1)
-# np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/chr5_merge.txt', divid2_1)
-# np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/chr5_divid_loc.txt', loc_d)
-# np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/chr5_divid_union.txt', loc_u)
-# np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/chr5_similar.txt', dlt)
 
 
 def main_find_diff(chr):
@@ -513,7 +536,12 @@ def main_find_diff(chr):
 #     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/5_similar.txt', dlt)
 
 
-list_IRM90 = os.listdir('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file2')
+
+
+
+# whole genome analysis
+#
+list_IRM90 = os.listdir('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file')
 list_IMR90_band = []
 list_IMR90_map = []
 for l in list_IRM90:
@@ -522,7 +550,7 @@ for l in list_IRM90:
     else:
         list_IMR90_map.append(l)
 
-list_HUVEC = os.listdir('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file2')
+list_HUVEC = os.listdir('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file')
 list_HUVEC_band = []
 list_HUVEC_map = []
 for l in list_HUVEC:
@@ -541,52 +569,258 @@ for l in list_IMR90_map:
         up.append(s[6])
         down.append(s[5])
 
-for i in range(1, len(chr)):
-    print(i)
-    try:
-        TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file2/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.'+up[i] +'.new2.band.txt')
-        TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file2/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new2.band.txt')
-        TAD_s, TAD1_only, TAD2_only = region_detect(TAD1, TAD2)
-        D1, D2, D3 = region_divid_v3(TAD2, TAD1, TAD_s)
 
-        f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file2/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.new2'
-        f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file2/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new2'
+lim = pd.read_csv('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/color_lim2.txt', sep='\t')
 
-        divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f1, f2, D3, D1, TAD_s, 25, 8)
-
-
-        try:
-            if divid1_1 == 0:
-                print('No')
-        except:
-            np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC2/'+chr[i]+'.' + down[i] + '.'+up[i] +'.divid1_1', divid1_1)
-            np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC2/'+chr[i]+'.' + down[i] + '.'+up[i] +'.divid2_1', divid2_1)
-            np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC2/'+chr[i]+'.' + down[i] + '.'+up[i] +'.loc_d', loc_d)
-            np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC2/'+chr[i]+'.' + down[i] + '.'+up[i] +'.loc_u', loc_u)
-            np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC2/'+chr[i]+'.' + down[i] + '.'+up[i] +'.dlt', dlt)
-    except:
-        pass
-
-
-# i = 10
+# HUVEC -> IMR90
 #
-# TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.'+up[i] +'.new.band.txt')
-# TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new.band.txt')
+# for i in range(1, len(chr)):
+#     #print(i)
+#     try:
+#
+#         #if chr[i] == '22':
+#             TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.'+up[i] +'.new.band.txt')
+#             TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new.band.txt')
+#             TAD_s, TAD1_only, TAD2_only = region_detect(TAD1, TAD2)
+#             D1, D2, D3 = region_divid_v3(TAD2, TAD1, TAD_s)
+#
+#             f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.new'
+#             f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new'
+#             lim1 = lim.iloc[int(chr[i])-1, 1]
+#             lim2 = lim.iloc[int(chr[i])-1, 5]
+#
+#             print(lim2)
+#             divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f1, f2, D3, D1, TAD_s, lim1, lim2)
+#
+#
+#             try:
+#                 if divid1_1 == 0:
+#                     print('No')
+#             except:
+#                 print(f1)
+#                 # np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC3/'+chr[i]+'.' + down[i] + '.'+up[i] +'.divid1_1', divid1_1)
+#                 # np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC3/'+chr[i]+'.' + down[i] + '.'+up[i] +'.divid2_1', divid2_1)
+#                 # np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC3/'+chr[i]+'.' + down[i] + '.'+up[i] +'.loc_d', loc_d)
+#                 # np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC3/'+chr[i]+'.' + down[i] + '.'+up[i] +'.loc_u', loc_u)
+#                 # np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC3/'+chr[i]+'.' + down[i] + '.'+up[i] +'.dlt', dlt)
+#     except:
+#         #print(i)
+#         pass
+
+
+# IMR90 -> HUVEC
+
+
+# for i in range(1, len(chr)):
+#     #print(i)
+#     try:
+#
+#         #if chr[i] == '22':
+#             TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file2/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.'+up[i] +'.new2.band.txt')
+#             TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file2/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new2.band.txt')
+#             TAD_s, TAD1_only, TAD2_only = region_detect(TAD2, TAD1)
+#             D1, D2, D3 = region_divid_v3(TAD1, TAD2, TAD_s)
+#
+#             # print('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file2/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.'+up[i] +'.new2.band.txt')
+#             # print('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file2/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new2.band.txt')
+#             f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file2/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.new2'
+#             f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file2/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new2'
+#             lim1 = lim.iloc[int(chr[i])-1, 1]
+#             lim2 = lim.iloc[int(chr[i])-1, 5]
+#
+#             print(lim2)
+#             divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f2, f1, D3, D1, TAD_s, 8, 25)
+#
+#
+#             try:
+#                 if divid1_1 == 0:
+#                     print('No')
+#             except:
+#                 # print('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file2/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.'+up[i] +'.new2.band.txt')
+#                 # print('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file2/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new2.band.txt')
+#                 np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/HUVEC-IMR902/'+chr[i]+'.' + down[i] + '.'+up[i] +'.divid1_1', divid1_1)
+#                 np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/HUVEC-IMR902/'+chr[i]+'.' + down[i] + '.'+up[i] +'.divid2_1', divid2_1)
+#                 np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/HUVEC-IMR902/'+chr[i]+'.' + down[i] + '.'+up[i] +'.loc_d', loc_d)
+#                 np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/HUVEC-IMR902/'+chr[i]+'.' + down[i] + '.'+up[i] +'.loc_u', loc_u)
+#                 np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/HUVEC/-IMR902/'+chr[i]+'.' + down[i] + '.'+up[i] +'.dlt', dlt)
+#     except:
+#         #print(i)
+#         pass
+
+
+
+
+
+# chr = '22'
+# up = '4000'
+# down = '3000'
+#
+# TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr+'_matrix_IMR90_Coverage.txt.'+down + '.'+up +'.new.band.txt')
+# TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr+'_matrix_HUVEC_Coverage.txt.' + down + '.'+up +'.new.band.txt')
 # TAD_s, TAD1_only, TAD2_only = region_detect(TAD1, TAD2)
 # D1, D2, D3 = region_divid_v3(TAD2, TAD1, TAD_s)
 #
-# f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.new'
-# f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new'
+# f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr+'_matrix_IMR90_Coverage.txt.'+down + '.' +up + '.new'
+# f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr+'_matrix_HUVEC_Coverage.txt.' + down + '.'+up +'.new'
 #
-# divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f1, f2, D3, D1, TAD_s, 25, 8)
+# divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f1, f2, D3, D1, TAD_s, 15, 10)
+#
+
+# try:
+#     if divid1_1 == 0:
+#         print('No')
+# except:
+#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/'+chr+'.' + down + '.'+up +'.divid1_1', divid1_1)
+#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/'+chr+'.' + down + '.'+up +'.divid2_1', divid2_1)
+#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/'+chr+'.' + down + '.'+up +'.loc_d', loc_d)
+#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/'+chr+'.' + down + '.'+up +'.loc_u', loc_u)
+#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/'+chr+'.' + down + '.'+up +'.dlt', dlt)
+
+
+# chr = '18'
+# down = '4000'
+# up = '5000'
+#
+# TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr+'_matrix_IMR90_Coverage.txt.'+down + '.'+up +'.new.band.txt')
+# TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr+'_matrix_HUVEC_Coverage.txt.' + down + '.'+up+'.new.band.txt')
+# TAD_s, TAD1_only, TAD2_only = region_detect(TAD2, TAD1)
+# D1, D2, D3 = region_divid_v3(TAD1, TAD2, TAD_s)
+#
+# f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr+'_matrix_IMR90_Coverage.txt.'+down + '.' +up + '.new'
+# f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr+'_matrix_HUVEC_Coverage.txt.' + down + '.'+up +'.new'
+# lim1 = lim.iloc[int(chr)-1, 1]
+# lim2 = lim.iloc[int(chr)-1, 5]
+#
+# print(lim2)
+# divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f2, f1, D3, D1, TAD_s, 8, 25)
 #
 #
 # try:
 #     if divid1_1 == 0:
 #         print('No')
 # except:
-#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/'+chr[i]+'.' + down[i] + '.'+up[i] +'.divid1_1', divid1_1)
-#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/'+chr[i]+'.' + down[i] + '.'+up[i] +'.divid2_1', divid2_1)
-#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/'+chr[i]+'.' + down[i] + '.'+up[i] +'.loc_d', loc_d)
-#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/'+chr[i]+'.' + down[i] + '.'+up[i] +'.loc_u', loc_u)
-#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/IMR90-HUVEC/'+chr[i]+'.' + down[i] + '.'+up[i] +'.dlt', dlt)
+#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/HUVEC-IMR90/'+chr[i]+'.' + down[i] + '.'+up[i] +'.divid1_1', divid1_1)
+#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/HUVEC-IMR90/'+chr[i]+'.' + down[i] + '.'+up[i] +'.divid2_1', divid2_1)
+#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/HUVEC-IMR90/'+chr[i]+'.' + down[i] + '.'+up[i] +'.loc_d', loc_d)
+#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/HUVEC-IMR90/'+chr[i]+'.' + down[i] + '.'+up[i] +'.loc_u', loc_u)
+#     np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/HUVEC/-IMR90'+chr[i]+'.' + down[i] + '.'+up[i] +'.dlt', dlt)
+
+
+'''
+heatmap IMR90 -> HUVEC
+'''
+#
+# for i in range(1, len(chr)):
+#     #print(i)
+#     try:
+#
+#         #if chr[i] == '22':
+#             TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file2/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.'+up[i] +'.new2.band.txt')
+#             TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file2/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new2.band.txt')
+#             TAD_s, TAD1_only, TAD2_only = region_detect(TAD2, TAD1)
+#             D1, D2, D3 = region_divid_v3(TAD1, TAD2, TAD_s)
+#
+#             # print('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file2/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.'+up[i] +'.new2.band.txt')
+#             # print('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file2/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new2.band.txt')
+#             f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file2/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.new2'
+#             f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file2/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new2'
+#             lim1 = lim.iloc[int(chr[i])-1, 1]
+#             lim2 = lim.iloc[int(chr[i])-1, 5]
+#             print(lim2)
+#             divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f2, f1, D3, D1, TAD_s, 8, 25)
+#
+#
+#             try:
+#                 if divid1_1 == 0:
+#                     print('No')
+#             except:
+#                 map1 = np.loadtxt(f1)
+#                 map2 = np.loadtxt(f2)
+#
+#                 test1 = calculate_region_split100(D3, map2, 30)
+#                 mean1_1 = sum(test1[:, 0]) / test1.shape[0]
+#                 mean1_2 = sum(test1[:, 1]) / test1.shape[0]
+#                 mean1_3 = sum(test1[:, 2]) / test1.shape[0]
+#
+#                 a1 = np.append(mean1_1, mean1_2, axis=1)
+#                 a2 = np.append(mean1_2, mean1_3, axis=1)
+#                 #b = np.append(a1, a2, axis=0)
+#
+#                 np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.mean2_1', mean1_1)
+#                 np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.mean2_2', mean1_2)
+#                 np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.mean2_3', mean1_3)
+#                 #np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/chr5_map1.txt', b)
+#                 print(f1)
+#     except:
+#         #print(i)
+#         pass
+
+
+
+
+
+'''
+heatmap HUVEC -> IMR90
+'''
+
+for i in range(1, len(chr)):
+    #print(i)
+    try:
+
+        #if chr[i] == '22':
+            TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.'+up[i] +'.new.band.txt')
+            TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new.band.txt')
+            TAD_s, TAD1_only, TAD2_only = region_detect(TAD1, TAD2)
+            D1, D2, D3 = region_divid_v3(TAD2, TAD1, TAD_s)
+
+            f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.new'
+            f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new'
+            lim1 = lim.iloc[int(chr[i])-1, 1]
+            lim2 = lim.iloc[int(chr[i])-1, 5]
+
+            print(lim2)
+            divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f1, f2, D3, D1, TAD_s, lim1, lim2)
+
+
+            try:
+                if divid1_1 == 0:
+                    print('No')
+            except:
+                print(f1)
+                map1 = np.loadtxt(f1)
+                map2 = np.loadtxt(f2)
+
+                test1 = calculate_region_split100(D3, map1, 30)
+                mean1_1 = sum(test1[:, 0]) / test1.shape[0]
+                mean1_2 = sum(test1[:, 1]) / test1.shape[0]
+                mean1_3 = sum(test1[:, 2]) / test1.shape[0]
+
+                a1 = np.append(mean1_1, mean1_2, axis=1)
+                a2 = np.append(mean1_2, mean1_3, axis=1)
+                #b = np.append(a1, a2, axis=0)
+
+                np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.mean1_1', mean1_1)
+                np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.mean1_2', mean1_2)
+                np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.mean1_3', mean1_3)
+                #np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/chr5_map1.txt', b)
+
+                test1 = calculate_region_split100(D3, map2, 30)
+                mean1_1 = sum(test1[:, 0]) / test1.shape[0]
+                mean1_2 = sum(test1[:, 1]) / test1.shape[0]
+                mean1_3 = sum(test1[:, 2]) / test1.shape[0]
+
+                a1 = np.append(mean1_1, mean1_2, axis=1)
+                a2 = np.append(mean1_2, mean1_3, axis=1)
+                # b = np.append(a1, a2, axis=0)
+
+                np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/' + chr[
+                    i] + '_matrix_IMR90_Coverage.txt.' + down[i] + '.' + up[i] + '.mean2_1', mean1_1)
+                np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/' + chr[
+                    i] + '_matrix_IMR90_Coverage.txt.' + down[i] + '.' + up[i] + '.mean2_2', mean1_2)
+                np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/' + chr[
+                    i] + '_matrix_IMR90_Coverage.txt.' + down[i] + '.' + up[i] + '.mean2_3', mean1_3)
+
+                print(f1)
+    except:
+        #print(i)
+        pass
