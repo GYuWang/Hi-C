@@ -763,64 +763,242 @@ heatmap IMR90 -> HUVEC
 heatmap HUVEC -> IMR90
 '''
 
-for i in range(1, len(chr)):
-    #print(i)
-    try:
+# for i in range(1, len(chr)):
+#     #print(i)
+#     try:
+#
+#         #if chr[i] == '22':
+#             TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.'+up[i] +'.new.band.txt')
+#             TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new.band.txt')
+#             TAD_s, TAD1_only, TAD2_only = region_detect(TAD1, TAD2)
+#             D1, D2, D3 = region_divid_v3(TAD2, TAD1, TAD_s)
+#
+#             f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.new'
+#             f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new'
+#             lim1 = lim.iloc[int(chr[i])-1, 1]
+#             lim2 = lim.iloc[int(chr[i])-1, 5]
+#
+#             print(lim2)
+#             divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f1, f2, D3, D1, TAD_s, lim1, lim2)
+#
+#
+#             try:
+#                 if divid1_1 == 0:
+#                     print('No')
+#             except:
+#                 print(f1)
+#                 map1 = np.loadtxt(f1)
+#                 map2 = np.loadtxt(f2)
+#
+#                 test1 = calculate_region_split100(D3, map1, 30)
+#                 mean1_1 = sum(test1[:, 0]) / test1.shape[0]
+#                 mean1_2 = sum(test1[:, 1]) / test1.shape[0]
+#                 mean1_3 = sum(test1[:, 2]) / test1.shape[0]
+#
+#                 a1 = np.append(mean1_1, mean1_2, axis=1)
+#                 a2 = np.append(mean1_2, mean1_3, axis=1)
+#                 #b = np.append(a1, a2, axis=0)
+#
+#                 np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.mean1_1', mean1_1)
+#                 np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.mean1_2', mean1_2)
+#                 np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.mean1_3', mean1_3)
+#                 #np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/chr5_map1.txt', b)
+#
+#                 test1 = calculate_region_split100(D3, map2, 30)
+#                 mean1_1 = sum(test1[:, 0]) / test1.shape[0]
+#                 mean1_2 = sum(test1[:, 1]) / test1.shape[0]
+#                 mean1_3 = sum(test1[:, 2]) / test1.shape[0]
+#
+#                 a1 = np.append(mean1_1, mean1_2, axis=1)
+#                 a2 = np.append(mean1_2, mean1_3, axis=1)
+#                 # b = np.append(a1, a2, axis=0)
+#
+#                 np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/' + chr[
+#                     i] + '_matrix_IMR90_Coverage.txt.' + down[i] + '.' + up[i] + '.mean2_1', mean1_1)
+#                 np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/' + chr[
+#                     i] + '_matrix_IMR90_Coverage.txt.' + down[i] + '.' + up[i] + '.mean2_2', mean1_2)
+#                 np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/' + chr[
+#                     i] + '_matrix_IMR90_Coverage.txt.' + down[i] + '.' + up[i] + '.mean2_3', mean1_3)
+#
+#                 print(f1)
+#     except:
+#         #print(i)
+#         pass
 
-        #if chr[i] == '22':
-            TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.'+up[i] +'.new.band.txt')
-            TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new.band.txt')
+'''
+simulation data for our methods
+'''
+
+# for i in range(1, 2):
+#     print(i)
+#     try:
+#         TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/map/simulation' + str(i) + '_split.txt.band.txt')
+#         TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/map/simulation' + str(i) + '_merge.txt.band.txt')
+#         TAD_s, TAD1_only, TAD2_only = region_detect(TAD1, TAD2)
+#         D1, D2, D3 = region_divid_v3(TAD2, TAD1, TAD_s)
+#
+#         f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/map/simulation' + str(i) + '_split.txt'
+#         f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/map/simulation' + str(i) + '_merge.txt'
+#
+#         divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f1, f2, D3, D1, TAD_s, 15, 15)
+#
+#
+#         try:
+#             if divid1_1 == 0:
+#                 print('No')
+#         except:
+#             print(f1)
+#             np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/our/' + str(i) + '.divid1_1', divid1_1)
+#             np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/our/'+ str(i) + '.divid2_1', divid2_1)
+#             np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/our/'+ str(i) + '.loc_d.txt', loc_d)
+#             np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/our/'+ str(i) + '.loc_u.txt', loc_u)
+#             np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/our/'+ str(i) + '.dlt', dlt)
+#     except:
+#         #print(i)
+#         pass
+
+# for i in range(51, 101):
+#     print(i)
+#     try:
+#         TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/diff_region/HiCseq/HiCseq' + str(i) + '_split.txt')
+#         TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/diff_region/HiCseq/HiCseq' + str(i) + '_merge.txt')
+#         TAD_s, TAD1_only, TAD2_only = region_detect(TAD1, TAD2)
+#         D1, D2, D3 = region_divid_v3(TAD2, TAD1, TAD_s)
+#
+#         f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/simulation' + str(i) + '_split.txt'
+#         f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/simulation' + str(i) + '_merge.txt'
+#
+#         divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f1, f2, D3, D1, TAD_s, 15, 15)
+#
+#
+#         try:
+#             if divid1_1 == 0:
+#                 print('No')
+#         except:
+#             print(f1)
+#             np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/diff_region/HiCseq/diff/' + str(i) + '.divid1_1', divid1_1)
+#             np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/diff_region/HiCseq/diff/'+ str(i) + '.divid2_1', divid2_1)
+#             np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/diff_region/HiCseq/diff/'+ str(i) + '.loc_d.txt', loc_d)
+#             np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/diff_region/HiCseq/diff/'+ str(i) + '.loc_u.txt', loc_u)
+#             np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/diff_region/HiCseq/diff/'+ str(i) + '.dlt', dlt)
+#     except:
+#         #print(i)
+#         pass
+
+
+
+# for i in range(1, 26):
+#     print(i)
+#     try:
+#         TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/map/simulation' + str(i) + '_split_sigmaZero10_domains.txt')
+#         TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/map/simulation' + str(i) + '_merge_sigmaZero10_domains.txt')
+#         TAD1 = np.hstack((TAD1[:, 1].reshape([TAD1.shape[0], 1]), TAD1))
+#         TAD2 = np.hstack((TAD2[:, 1].reshape([TAD2.shape[0], 1]), TAD2))
+#         TAD_s, TAD1_only, TAD2_only = region_detect(TAD1, TAD2)
+#
+#
+#
+#         D1, D2, D3 = region_divid_v3(TAD2, TAD1, TAD_s)
+#
+#         f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/map/simulation' + str(i) + '_split.txt'
+#         f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/map/simulation' + str(i) + '_merge.txt'
+#
+#         divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f1, f2, D3, D1, TAD_s, 15, 15)
+#
+#
+#         try:
+#             if divid1_1 == 0:
+#                 print('No')
+#         except:
+#             print(f1)
+#             np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/IC_Finder/IC_finder_10/' + str(i) + '.divid1_1', divid1_1)
+#             np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/IC_Finder/IC_finder_10/'+ str(i) + '.divid2_1', divid2_1)
+#             np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/IC_Finder/IC_finder_10/'+ str(i) + '.loc_d.txt', loc_d)
+#             np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/IC_Finder/IC_finder_10/'+ str(i) + '.loc_u.txt', loc_u)
+#             np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/IC_Finder/IC_finder_10/'+ str(i) + '.dlt', dlt)
+#     except:
+#         #print(i)
+#         pass
+
+
+'''
+sampling simulation data
+'''
+
+# fold change
+
+for i in range(1, 26):
+    for j in range(1, 10):
+        print(i)
+        try:
+            TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/map/simulation' +
+                              str(i) + '_split.txt.band.txt')
+            TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/sampling/simulation'
+                              + str(i) + '_merge_1' + str(j) + '.txt.band.txt')
             TAD_s, TAD1_only, TAD2_only = region_detect(TAD1, TAD2)
             D1, D2, D3 = region_divid_v3(TAD2, TAD1, TAD_s)
 
-            f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.new'
-            f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new'
-            lim1 = lim.iloc[int(chr[i])-1, 1]
-            lim2 = lim.iloc[int(chr[i])-1, 5]
+            f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/map/simulation' \
+                 + str(i) + '_split.txt'
+            f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/sampling/simulation'\
+                 + str(i) + '_merge_1' + str(j) + '.txt'
 
-            print(lim2)
-            divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f1, f2, D3, D1, TAD_s, lim1, lim2)
-
-
+            divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f1, f2, D3, D1, TAD_s, 15, 15)
             try:
                 if divid1_1 == 0:
                     print('No')
             except:
                 print(f1)
-                map1 = np.loadtxt(f1)
-                map2 = np.loadtxt(f2)
+                np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/sampling/diff_FC/'
+                           + str(i) + '_1' + str(j) + '.divid1_1', divid1_1)
+                np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/sampling/diff_FC/'
+                           + str(i) + '_1' + str(j) + '.divid2_1', divid2_1)
+                np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/sampling/diff_FC/'
+                           + str(i) + '_1' + str(j) + '.loc_d.txt', loc_d)
+                np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/sampling/diff_FC/'
+                           + str(i) + '_1' + str(j) + '.loc_u.txt', loc_u)
+                np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/sampling/diff_FC/'
+                           + str(i) + '_1' + str(j) + '.dlt', dlt)
+        except:
+            pass
 
-                test1 = calculate_region_split100(D3, map1, 30)
-                mean1_1 = sum(test1[:, 0]) / test1.shape[0]
-                mean1_2 = sum(test1[:, 1]) / test1.shape[0]
-                mean1_3 = sum(test1[:, 2]) / test1.shape[0]
+# sequence depth
+#
+# for i in range(1, 26):
+#     for j in range(1, 10):
+#         print(i)
+#         try:
+#             TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/sampling/simulation'
+#                               + str(i) + '_split_1' + str(j) + '.txt.band.txt')
+#             TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/sampling/simulation'
+#                               + str(i) + '_merge_1' + str(j) + '.txt.band.txt')
+#             TAD_s, TAD1_only, TAD2_only = region_detect(TAD1, TAD2)
+#             D1, D2, D3 = region_divid_v3(TAD2, TAD1, TAD_s)
+#
+#             f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/sampling/simulation'\
+#                  + str(i) + '_split_1' + str(j) + '.txt'
+#             f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/sampling/simulation'\
+#                  + str(i) + '_merge_1' + str(j) + '.txt'
+#
+#             divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(f1, f2, D3, D1, TAD_s, 15, 15)
+#             try:
+#                 if divid1_1 == 0:
+#                     print('No')
+#             except:
+#                 print(f1)
+#                 np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/sampling/diff_depth/'
+#                            + str(i) + '_1' + str(j) + '.divid1_1', divid1_1)
+#                 np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/sampling/diff_depth/'
+#                            + str(i) + '_1' + str(j) + '.divid2_1', divid2_1)
+#                 np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/sampling/diff_depth/'
+#                            + str(i) + '_1' + str(j) + '.loc_d.txt', loc_d)
+#                 np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/sampling/diff_depth/'
+#                            + str(i) + '_1' + str(j) + '.loc_u.txt', loc_u)
+#                 np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2_rerun/sampling/diff_depth/'
+#                            + str(i) + '_1' + str(j) + '.dlt', dlt)
+#         except:
+#             pass
 
-                a1 = np.append(mean1_1, mean1_2, axis=1)
-                a2 = np.append(mean1_2, mean1_3, axis=1)
-                #b = np.append(a1, a2, axis=0)
 
-                np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.mean1_1', mean1_1)
-                np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.mean1_2', mean1_2)
-                np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.' +up[i] + '.mean1_3', mean1_3)
-                #np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/chr5_map1.txt', b)
 
-                test1 = calculate_region_split100(D3, map2, 30)
-                mean1_1 = sum(test1[:, 0]) / test1.shape[0]
-                mean1_2 = sum(test1[:, 1]) / test1.shape[0]
-                mean1_3 = sum(test1[:, 2]) / test1.shape[0]
 
-                a1 = np.append(mean1_1, mean1_2, axis=1)
-                a2 = np.append(mean1_2, mean1_3, axis=1)
-                # b = np.append(a1, a2, axis=0)
-
-                np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/' + chr[
-                    i] + '_matrix_IMR90_Coverage.txt.' + down[i] + '.' + up[i] + '.mean2_1', mean1_1)
-                np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/' + chr[
-                    i] + '_matrix_IMR90_Coverage.txt.' + down[i] + '.' + up[i] + '.mean2_2', mean1_2)
-                np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/compare/figure/heatmap/' + chr[
-                    i] + '_matrix_IMR90_Coverage.txt.' + down[i] + '.' + up[i] + '.mean2_3', mean1_3)
-
-                print(f1)
-    except:
-        #print(i)
-        pass

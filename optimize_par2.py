@@ -74,7 +74,7 @@ def main(par):
                 write_subset('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/' + str(i) + '_matrix_IMR90_Coverage.txt', down,
                          up)
     else:
-        list_IRM90 = os.listdir('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file2')
+        list_IRM90 = os.listdir('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file')
         list_IMR90_band = []
         list_IMR90_map = []
         for l in list_IRM90:
@@ -83,7 +83,7 @@ def main(par):
             else:
                 list_IMR90_map.append(l)
 
-        list_HUVEC = os.listdir('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file2')
+        list_HUVEC = os.listdir('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file')
         list_HUVEC_band = []
         list_HUVEC_map = []
         for l in list_HUVEC:
@@ -104,14 +104,16 @@ def main(par):
         for i in range(len(chr)):
             print(i)
             try:
-                f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file2/' + chr[
-                    i] + '_matrix_IMR90_Coverage.txt.' + down[i] + '.' + up[i] + '.new2'
-                f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file2/' + chr[
-                    i] + '_matrix_HUVEC_Coverage.txt.' + down[i] + '.' + up[i] + '.new2'
-                f1_band = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file2/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.'+up[i] +'.new2.band.txt'
-                f2_band = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file2/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new2.band.txt'
-                plot_TAD(f1,f1_band,2,25)
-                plot_TAD(f2, f2_band, 1, 10)
+                #if chr[i] == '22':
+                    print(chr[i])
+                    f1 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/' + chr[
+                        i] + '_matrix_IMR90_Coverage.txt.' + down[i] + '.' + up[i] + '.new'
+                    f2 = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/' + chr[
+                        i] + '_matrix_HUVEC_Coverage.txt.' + down[i] + '.' + up[i] + '.new'
+                    f1_band = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr[i]+'_matrix_IMR90_Coverage.txt.'+down[i] + '.'+up[i] +'.new.band.txt'
+                    f2_band = '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr[i]+'_matrix_HUVEC_Coverage.txt.' + down[i] + '.'+up[i] +'.new.band.txt'
+                    plot_TAD(f1,f1_band,1,15)
+                    plot_TAD(f2, f2_band, 1, 10)
             except:
                 pass
 

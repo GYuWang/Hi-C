@@ -75,18 +75,18 @@ def main(chr, down, up, opt):
 
 
     else:
-        # plot_TAD('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr+'_matrix_HUVEC_Coverage.txt.'+str(down)+'.' + str(up)+'.new',
-        #          '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr+'_matrix_HUVEC_Coverage.txt.'+str(down)+'.' + str(up) +
-        #          '.new.band.2.txt', 1, 8)
+        plot_TAD('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr+'_matrix_HUVEC_Coverage.txt.'+str(down)+'.' + str(up)+'.new',
+                 '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/'+chr+'_matrix_HUVEC_Coverage.txt.'+str(down)+'.' + str(up) +
+                 '.new.band.2.txt', 1, 8)
         # plot_TAD('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/' + chr + '_matrix_HUVEC_Coverage.txt.' + str(
         #     down) + '.' + str(up),
         #          '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/band_opt/5_matrix_HUVEC_Coverage.txt', 1.8, 12)
         # plot_TAD('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/GM12878/' + chr + '_matrix_GM12878_Coverage.txt.' + str(
         #     down) + '.' + str(up),'/Users/guangyu/Work/Hi-C/Data/Contactmatrix/GM12878/' + chr + '_matrix_GM12878_Coverage.txt.' + str(
         #              down) + '.' + str(up) +'.band.txt', 12, 90)
-        plot_TAD('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr+'_matrix_IMR90_Coverage.txt.'+str(down)+'.'+str(up)+'.new',
-                 '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr+'_matrix_IMR90_Coverage.txt.'+str(down)+'.'+str(up) +
-                 '.new.band2.txt', 1, 20)
+        # plot_TAD('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr+'_matrix_IMR90_Coverage.txt.'+str(down)+'.'+str(up)+'.new',
+        #          '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/'+chr+'_matrix_IMR90_Coverage.txt.'+str(down)+'.'+str(up) +
+        #          '.new.band2.txt', 1, 17)
         # plot_TAD(
         #     '/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/' + chr + '_matrix_IMR90_Coverage.txt.' + str(
         #         down) + '.' + str(up),
@@ -100,7 +100,7 @@ def main(chr, down, up, opt):
 
 
 if __name__== "__main__":
-    main('6', 4000, 5000, 2)
+    main('22', 4000, 5000, 2)
 
 
 

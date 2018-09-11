@@ -153,17 +153,30 @@ def merge(TAD1, TAD2):
 
 
 
-f1 = "/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/simulation2_merge.txt"
-f2 = "/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/simulation2_split.txt"
+# f1 = "/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/simulation2_merge.txt"
+# f2 = "/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/simulation2_split.txt"
+#
+# TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/simulation2_merge.txt.band.txt')
+# TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/simulation2_split.txt.band.txt')
+# TAD_all = merge(TAD1, TAD2)
+#
+# TAD = similarity(f1,f2,TAD_all)
+# np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/simulation2_laplacian.txt', TAD)
+#
 
-TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/simulation2_merge.txt.band.txt')
-TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/simulation2_split.txt.band.txt')
-TAD_all = merge(TAD1, TAD2)
+for i in range(2,27):
+    f1 = "/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/simulation" + str(i) + "_merge.txt"
+    f2 = "/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/simulation" + str(i) + "_split.txt"
 
-TAD = similarity(f1,f2,TAD_all)
-np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/simulation2_laplacian.txt', TAD)
+    TAD1 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/simulation'
+                      + str(i) + '_merge.txt.band.txt')
+    TAD2 = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/simulation'
+                      + str(i) + '_split.txt.band.txt')
+    TAD_all = merge(TAD1, TAD2)
 
-
+    TAD = similarity(f1, f2, TAD_all)
+    np.savetxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/simulation/figure2/simulation'+
+               str(i) + '_laplacian.txt', TAD)
 
 
 
