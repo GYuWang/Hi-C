@@ -12,8 +12,8 @@ from rpy2.rinterface import RRuntimeWarning
 
 
 def printHelp():
-    print('\nDACS version 1.0.0')
-    print('For help information for each function, try:\npython3 DACS.py <function> -h')
+    print('\nDACTAD version 1.0.0')
+    print('For help information for each function, try:\npython3 DACTAD.py <function> -h')
     print('\nFunctions:')
     print('\tTAD_calculator:\n\t\tidentify the topological domain\n')
     print('\tcorner_split:\n\t\tcorner split algorithm for identifying split TAD\n')
@@ -33,11 +33,10 @@ def TAD_calculator(command='TAD_calculator'):
         # at least two parameter need to be specified, will print help message if no parameter is specified
         print("\nusage:\npython3 DACS.py TAD_calculator <contact_map_file_paths> [optional arguments]\n\n"
               "for more help, please try: python DACS.py TAD_calculator -h\n")
-
         return 0
 
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-                                     usage="\n\npython3 DACS.py TAD_calculator <contact_map_file_paths> "
+                                     usage="\n\npython3 DACS.py TAD_calculator "
                                            "[optional arguments]\n\n", description='')
     parser.add_argument('command', default=None,
                         help="set as 'TAD_calculator' to identify TAD relative to Hi-C contact map")
@@ -394,9 +393,6 @@ def corner_split(command='corner_split'):
             if abs(t[2] - range1[2]) < 10:
                 flag = flag + 1
         if flag >= 2:
-            # f = RangInList(range1, TAD_s.tolist())  # remove similar large region
-            # print(range1)
-            # if f == 1:
             dic = []
             for i in range(2, range2.shape[0] + 1):
                 comb = list(combinations(range(range2.shape[0]), i))
@@ -409,17 +405,13 @@ def corner_split(command='corner_split'):
                         f2 = RangInList(s, TAD_s.tolist())
                         flag3.append(f2)
                     r = length / (range1[2] - range1[1])
-                    # print(x, r)
-                    # if r > 0.9 and r < 1.1 and sum(flag3) != 0:
                     if r > 0.8 and r < 1.1:  # change parameter
                         flag2 = 0  # find all real sep
                         for l in range(x.shape[0] - 1):
-                            # print(x[l,:], x.shape[0])
                             if x[l + 1, 1] - x[l, 2] > 20 or x[l, 2] - x[l + 1, 1] > 20:  # change parameter
                                 flag2 = 1
                         if flag2 == 0:
                             dic.append([x, r])
-                            # print(x, r)
             return (dic)
 
 
@@ -440,27 +432,17 @@ def corner_split(command='corner_split'):
                 for t2 in TAD2:
                     if t1[1] - t2[1] < 20 and t2[2] - t1[2] < 20:
                         TAD_in = np.append(TAD_in, [t2], axis=0)
-                # print('-------')
-                # print(t1, TAD_in)
-                # print('+++++++')
                 D = TAD_divid_V3(t1, TAD_in, TAD_s)
 
                 if D is not None and len(D) != 0:
-                    # dif.append([t1, D])
                     m = []
                     for j in range(0, len(D)):
                         m.append(D[j][0].shape[0])
-
-                    # print(t1, D, max(m))
-
                     for j in range(0, len(D)):
-                        # if D[j][0].shape[0] == max(m):             # choose the most split (not need)
                         diff1.append([t1, count])
                         diff2.append(D[j])
                         diff3.append([D[j][0][:, 1:3], count])
                         count = count + 1
-                        # max_region = D[j]
-                        # print(t1, max_region[0][:, 1:3])
                 TAD_in = np.empty(shape=[0, 3])
         except:
             try:
@@ -711,7 +693,7 @@ def corner_split(command='corner_split'):
                         help="up limits for two compared Hi-C contact maps, paths must be separated by the comma ','.")
 
     parser.add_argument('-f', '--fold_change', dest="fold_change", default=1, type=float,
-                        help="fold change ********")
+                        help="fold change")
 
     parser.add_argument('-o', '--output', dest="output", default=None,
                         help="path to output files")
@@ -749,7 +731,6 @@ def corner_split(command='corner_split'):
 
 
 
-
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         if sys.argv[1] == 'TAD_calculator':
@@ -759,8 +740,8 @@ if __name__ == "__main__":
         else:
             printHelp()
     else:
-        print('\nDACS version 1.0.0')
-        print('For a list of functions in DACS, please try:\npython DACS.py -h')
+        print('\nDACTAD version 1.0.0')
+        print('For a list of functions in DACTAD, please try:\npython DACTAD.py -h')
         print('')
 
 
