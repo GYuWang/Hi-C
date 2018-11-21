@@ -55,10 +55,7 @@ def get_ratio(map, TAD):
 
 
 TAD = np.loadtxt("/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/pipline/output/test.HUVEC.txt")
-# TAD = np.loadtxt("/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/pipline/output/test.IMR90.txt")
-
 map = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/HUVEC/new_file/8_matrix_HUVEC_Coverage.txt.10000.11000.new')
-# map = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/8_matrix_IMR90_Coverage.txt.10000.11000.new')
 
 
 TAD_t1 = find_t1(TAD)
@@ -68,7 +65,6 @@ print(ratio)
 print(np.mean(ratio))
 
 TAD = np.loadtxt("/Users/guangyu/Work/Hi-C/Data/Contactmatrix/differential/pipline/output/test.IMR90.txt")
-
 map = np.loadtxt('/Users/guangyu/Work/Hi-C/Data/Contactmatrix/IRM90/matrix/new_file/8_matrix_IMR90_Coverage.txt.10000.11000.new')
 
 
