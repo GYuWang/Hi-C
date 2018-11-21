@@ -16,8 +16,6 @@ def find_t1(TAD):
 
     t1 = np.empty(shape=[0, 3])
     for t in TAD:
-        # print('---------------')
-        # print([t, is_t1(t, TAD)])
         if is_t1(t, TAD) == 1:
             t1 = np.append(t1, [t], axis=0)
     return t1
