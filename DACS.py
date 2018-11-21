@@ -376,14 +376,12 @@ def corner_split(command='corner_split'):
         except:
             return band_s, TAD1_only, TAD2_only
 
-
     def RangInList(L,TAD):
         flag1 = 1
         for t in TAD:
             if abs(L[1] - t[1]) < 10 and abs(L[2] - t[2]) < 10:
                 flag1 = 0
         return flag1
-
 
     def TAD_divid_V3(range1, range2, TAD_s):
         flag = 0
@@ -413,7 +411,6 @@ def corner_split(command='corner_split'):
                         if flag2 == 0:
                             dic.append([x, r])
             return (dic)
-
 
     def region_divid_v3(TAD1, TAD2, TAD_s):
         '''
@@ -495,7 +492,6 @@ def corner_split(command='corner_split'):
                     TAD_in = np.empty(shape=[0, 3])
         return np.array(diff1), np.array(diff2), np.array(diff3)
 
-
     def calculate_region_mean(D3, map1, map2, p1, p2):
         '''
         :param D3: divided region
@@ -524,14 +520,12 @@ def corner_split(command='corner_split'):
             avr_diff.append([avr_all1_temp - avr_all2_temp, count])
         return avr_all1, avr_all2, avr_diff
 
-
     def count_cross_prob_eachregion(intract):
         R = np.zeros((intract.shape[0] - 1, intract.shape[0] - 1))
         for i in range(intract.shape[0] - 1):
             for j in range(intract.shape[0] - 1):
                 R[i, j] = (intract[i, j + 1] * 2) / (intract[i, j] + intract[i + 1, j + 1])
         return R
-
 
     def count_cross_prob(avr, fold):
         '''
@@ -555,7 +549,6 @@ def corner_split(command='corner_split'):
             ratio.append([R / fold, count, flag])
         return ratio
 
-
     def count_intrc(idx, avr):
         '''
         count average interaction
@@ -572,7 +565,6 @@ def corner_split(command='corner_split'):
                     inter = np.append(inter, [inter_tmp], axis=0)
         return inter
 
-
     def loc_divid(D3, idx):
         '''
         find the location of divide region
@@ -586,7 +578,6 @@ def corner_split(command='corner_split'):
                 reg = np.append(reg, d[0], axis=0)
         return reg
 
-
     def loc_union(D1, idx):
         '''
         find the location of union region
@@ -599,7 +590,6 @@ def corner_split(command='corner_split'):
             if d[1] in idx:
                 reg = np.append(reg, [d[0]], axis=0)
         return reg[:, 1:3]
-
 
     def remove_diff(loc_u, loc_d, TAD_s):
         '''
@@ -619,7 +609,6 @@ def corner_split(command='corner_split'):
         TAD_s = np.delete(TAD_s, idx, 0)
         return TAD_s
 
-
     def compar_prob(ratio1, ratio2):
         '''
         find real split site
@@ -635,7 +624,6 @@ def corner_split(command='corner_split'):
                 if np.mean(ratio_tmp.diagonal()) > 0.09:  # real divide region by cutoff: -0.1
                     idx.append(ratio2[i][1])
         return idx
-
 
     def divid_region(f1, f2, D3, D1, TAD_s, p1, p2, fold):
         '''
@@ -666,10 +654,59 @@ def corner_split(command='corner_split'):
         else:
             return 0, 0, 0, 0, 0
 
+    def find_t1(TAD):
+        def is_t1(t, TAD):
+            '''
+            t is T1 TAD return 1, else return 0
+            '''
+            flag = 1
+            for t0 in TAD:
+                if not np.array_equal(t0, t):
+                    # print([t0, t[1] - t0[1], t0[2] - t[2]])
+                    if t[1] - t0[1] <= 0 and t0[2] - t[2] <= 0:
+                        flag = 0
+            return flag
+
+        t1 = np.empty(shape=[0, 3])
+        for t in TAD:
+            if is_t1(t, TAD) == 1:
+                t1 = np.append(t1, [t], axis=0)
+        return t1
+
+    def get_ratio(map, TAD, up):
+        def neighbor_TAD(TAD):
+            '''
+            find each pair of nearby TAD
+            '''
+            pair = []
+            for i in range(TAD.shape[0]):
+                for j in range(TAD.shape[0]):
+                    if abs(TAD[i, 2] - TAD[j, 1]) < 20:
+                        pair.append([TAD[i], TAD[j]])
+            return np.array(pair)
+
+        def calculate_ratio(map, pair):
+            ratio = []
+            for T in pair:
+                t1 = T[0]
+                t2 = T[1]
+                m1 = map[int(t1[1]):int(t1[2]), int(t1[1]):int(t1[2])]
+                m2 = map[int(t2[1]):int(t2[2]), int(t2[1]):int(t2[2])]
+                m3 = map[int(t1[1]):int(t1[2]), int(t2[1]):int(t2[2])]
+                mean_m1 = np.mean(m1[m1 < up])
+                mean_m2 = np.mean(m2[m2 < up])
+                mean_m3 = np.mean(m3[m3 < up])
+                r = mean_m3 / (mean_m1 + mean_m2)
+                ratio.append(r)
+            return ratio
+
+        pair = neighbor_TAD(TAD)
+        ratio = calculate_ratio(map, pair)
+        return ratio
 
     if (len(sys.argv) < 3) and ('-h' not in sys.argv) and ('--help' not in sys.argv):
         # at least two parameter need to be specified, will print help message if no parameter is specified
-        print("\nusage:\npython3 DACS.py TAD_calculator <contact_map_file_paths> [optional arguments]\n\n"
+        print("\nusage:\npython3 DACTAD.py TAD_calculator <contact_map_file_paths> [optional arguments]\n\n"
               "for more help, please try: python DACS.py TAD_calculator -h\n")
         return 0
 
@@ -692,8 +729,9 @@ def corner_split(command='corner_split'):
     parser.add_argument('-u', '--up_limits', dest="up", default=None,
                         help="up limits for two compared Hi-C contact maps, paths must be separated by the comma ','.")
 
-    parser.add_argument('-f', '--fold_change', dest="fold_change", default=1, type=float,
-                        help="fold change")
+    parser.add_argument('-j', '--adjust_quality', dest="adjust_quality", default=0, type=int,
+                        help="set as 1 to normalize sequence quality for two Hi-C contact maps, set as 0 not to "
+                             "normalize sequence quality for two Hi-C contact maps")
 
     parser.add_argument('-o', '--output', dest="output", default=None,
                         help="path to output files")
@@ -716,8 +754,20 @@ def corner_split(command='corner_split'):
 
     D1, D2, D3 = region_divid_v3(TAD1, TAD2, TAD_s)
 
-    divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(file[1], file[0], D3, D1, TAD_s, float(up[1]), float(up[0]),
-                                                         args.fold_change)      # contact_map1 -> contact_map2
+    if args.adjust_quality == 0:
+        divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(file[1], file[0], D3, D1, TAD_s, float(up[1]), float(up[0]),
+                                                             1)      # contact_map1 -> contact_map2
+    elif args.adjust_quality == 1:
+        map1 = np.loadtxt(file[0])
+        map2 = np.loadtxt(file[1])
+        ratio1 = get_ratio(map1, TAD1, float(up[0]))
+        ratio2 = get_ratio(map2, TAD2, float(up[1]))
+        fold = np.mean(ratio1)/np.mean(ratio2)
+        divid1_1, divid2_1, loc_d, loc_u, dlt = divid_region(file[1], file[0], D3, D1, TAD_s, float(up[1]),
+                                                             float(up[0]), fold)  # contact_map1 -> contact_map2
+    else:
+        print("\nusage:\npython3 DACS.py TAD_calculator <contact_map_file_paths> [optional arguments]\n\n"
+              "for more help, please try: python DACS.py TAD_calculator -h\n")
 
     try:
         if divid1_1 == 0:
